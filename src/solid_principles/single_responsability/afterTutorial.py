@@ -1,6 +1,7 @@
 import os
 from dataclasses import dataclass, field
 from typing import Optional, Protocol
+import uuid
 from pydantic import BaseModel
 import stripe
 from dotenv import load_dotenv
@@ -21,6 +22,12 @@ class CustomerData(BaseModel):
 class PaymentData(BaseModel):
     amount: int
     source: str
+class PaymentResponse(BaseModel):
+    status: str
+    amount: int
+    transaction_id: Optional[str] = None
+    message: Optional[str] = None
+
 @dataclass
 class CustomerValidator:
     def validate(self, customer_data: CustomerData):
@@ -120,9 +127,11 @@ class PaymentProcessor(Protocol):
         :rtype: Charge
         """
         ...
+        def refund_payment(self, transaction_id:str) -> PaymentResponse: ...
+        def setup_recurring_payment(self, customer_data: CustomerData, payment_data:PaymentData) -> PaymentResponse: ...
 @dataclass
 class StripePaymentProcessor(PaymentProcessor):
-    def process_transaction(self, customer_data:CustomerData, payment_data: PaymentData) -> Charge:
+    def process_transaction(self, customer_data:CustomerData, payment_data: PaymentData) -> PaymentResponse:
         stripe.api_key = os.getenv("STRIPE_API_KEY")
         try:
             charge = stripe.Charge.create(
@@ -137,6 +146,24 @@ class StripePaymentProcessor(PaymentProcessor):
             print("Payment failed:", e)
             raise e
 
+class OfflinePaymentProcessor(PaymentProcessor):
+    def process_transaction(
+        self, customer_data: CustomerData, payment_data: PaymentData
+    ) -> PaymentResponse:
+        print("Processing offline payment for", customer_data.name)
+        return PaymentResponse(
+            status="success",
+            amount=payment_data.amount,
+            transaction_id=str(uuid.uuid4()),
+            message="Offline payment success",
+        )
+    def refund_payment(self, transaction_id:str) -> PaymentResponse:
+        print("Refunds are not supported in OfflinePaymentProcessor")
+        raise NotImplementedError("refunds not supported in offline processor")
+    
+    def setup_recurring_payment(self, customer_data: CustomerData, payment_data:PaymentData) -> PaymentResponse:
+        print("recurring payments are not supported in OfflinePaymentProcessor")
+        raise NotImplementedError("recuring payment not supported in offline processor")
 @dataclass
 class PaymentServices:
     customer_validator = CustomerValidator()

@@ -205,6 +205,8 @@ class OfflinePaymentProcessor(PaymentProcessorProtocol):
             transaction_id=str(uuid.uuid4()),
             message="Offline payment success",
         )
+    
+    def refon
 
 
 class Notifier(Protocol):
