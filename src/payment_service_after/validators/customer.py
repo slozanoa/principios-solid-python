@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from payment_service_after.commons import CustomerData
+from commons import CustomerData
 
 @dataclass
 class CustomerValidator:

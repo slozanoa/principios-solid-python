@@ -1,5 +1,5 @@
 import uuid
-from payment_service_after.commons import CustomerData, PaymentData, PaymentResponse
+from commons import CustomerData, PaymentData, PaymentResponse
 from .payment import PaymentProcessorProtocol
 
 class OfflinePaymentProcessor(PaymentProcessorProtocol):

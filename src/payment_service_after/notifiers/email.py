@@ -1,5 +1,5 @@
-from src.payment_service.notifiers.notifier import NotifierProtocol
-from src.payment_service_after.commons.customer import CustomerData
+from .notifier import NotifierProtocol
+from commons.customer import CustomerData
 
 
 class EmailNotifier(NotifierProtocol):

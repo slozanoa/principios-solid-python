@@ -2,7 +2,7 @@
 import os
 from dotenv import load_dotenv
 import stripe
-from payment_service_after.commons import CustomerData, PaymentResponse, PaymentData
+from commons import CustomerData, PaymentResponse, PaymentData
 
 from .payment import PaymentProcessorProtocol
 from .recurring import RecurringPaymentProcessorProtocol

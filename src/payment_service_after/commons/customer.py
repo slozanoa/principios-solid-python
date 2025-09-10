@@ -1,8 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel
 
-from .contanct import ContactInfo
-
+from .contact import ContactInfo
 
 class CustomerData(BaseModel):
     name: str

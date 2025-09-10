@@ -1,12 +1,12 @@
 from service import PaymentService
 
-from .processors import StripePaymentProcessor
+from processors import StripePaymentProcessor
 
-from .notifiers import EmailNotifier, NotifierProtocol, SMSNotifier
-from .loggers import TransactionLogger
+from notifiers import EmailNotifier, NotifierProtocol, SMSNotifier
+from loggers import TransactionLogger
 
-from .validators import CustomerValidator, PaymentDataValidator
-from .commons import CustomerData, ContactInfo
+from validators import CustomerValidator, PaymentDataValidator
+from commons import CustomerData, ContactInfo,PaymentData
 
 def get_email_notifier()-> EmailNotifier:
     return SMSNotifier(sms_gateway="smsgatewayExample")
@@ -29,7 +29,6 @@ def get_customer_data() -> CustomerData:
 
 if __name__ == "__main__":
     stripe_payment_processor = StripePaymentProcessor()
-    customer_data = CustomerData(name="jhon doe")
 
     customer_data = get_customer_data()
     notifier = get_notifier_implementation(customer_data=customer_data)
@@ -41,16 +40,24 @@ if __name__ == "__main__":
     payment_data_validator = PaymentDataValidator()
     logger = TransactionLogger()
 
-    
-
-    service = PaymentService (
-        payment_processor=stripe_payment_processor,
+    payment_data = PaymentData(amount=100, source="tok_visa", currency="USD")
+    service = PaymentService.create_with_payment_processor(
+        payment_data=payment_data,
         notifier=notifier,
         customer_validator=customer_validator,
         payment_validator=payment_data_validator,
         logger=logger,
     )
+    print(service)
+
+    # service = PaymentService (
+    #     payment_processor=stripe_payment_processor,
+    #     notifier=notifier,
+    #     customer_validator=customer_validator,
+    #     payment_validator=payment_data_validator,
+    #     logger=logger,
+    # )
 
     #cambio de estrategia de notificación a estrategia email
-    service.set_notifier(email_notifier)
-    service.set_notifier(sms_notifier)
+    # service.set_notifier(email_notifier)
+    # service.set_notifier(sms_notifier)

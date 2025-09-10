@@ -1,4 +1,4 @@
-from payment_service_after.commons import PaymentData
+from commons import PaymentData
 
 
 class PaymentDataValidator:

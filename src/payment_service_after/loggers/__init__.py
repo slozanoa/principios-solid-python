@@ -1,1 +1,3 @@
-from transaction import TransactionLogger
+from .transaction import TransactionLogger
+
+__all__ = ["TransactionLogger"]
