@@ -12,9 +12,9 @@ from processors import (
 from notifiers import NotifierProtocol
 from validators import CustomerValidator, PaymentDataValidator
 from loggers import TransactionLogger
-
+from service_protocol import PaymentServiceProtocol
 @dataclass
-class PaymentService:
+class PaymentService(PaymentServiceProtocol):
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
     customer_validator: CustomerValidator

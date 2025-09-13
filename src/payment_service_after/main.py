@@ -7,7 +7,7 @@ from loggers import TransactionLogger
 
 from validators import CustomerValidator, PaymentDataValidator
 from commons import CustomerData, ContactInfo,PaymentData
-
+from logging_service import PaymentServiceLogging
 def get_email_notifier()-> EmailNotifier:
     return SMSNotifier(sms_gateway="smsgatewayExample")
 
@@ -48,7 +48,8 @@ if __name__ == "__main__":
         payment_validator=payment_data_validator,
         logger=logger,
     )
-    print(service)
+    logging_service = PaymentServiceLogging(wrappend=service)
+    logging_service.process_refund(transaction_id="123456")
 
     # service = PaymentService (
     #     payment_processor=stripe_payment_processor,
