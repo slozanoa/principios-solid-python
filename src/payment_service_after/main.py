@@ -3,12 +3,9 @@ from service import PaymentService
 from processors import StripePaymentProcessor
 
 from notifiers import EmailNotifier, NotifierProtocol, SMSNotifier
-from loggers import TransactionLogger
 
 from builder import PaymentServiceBuilder
-from validators import CustomerValidator, PaymentDataValidator
 from commons import CustomerData, ContactInfo,PaymentData
-from logging_service import PaymentServiceLogging
 def get_email_notifier()-> EmailNotifier:
     return EmailNotifier()
 
