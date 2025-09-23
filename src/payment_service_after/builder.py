@@ -5,6 +5,7 @@ from processors import (
     RecurringPaymentProcessorProtocol,
     RefundProcessorProtocol
 )
+from listeners import ListenersManager, AccountabilityListner
 from notifiers import NotifierProtocol, EmailNotifier, SMSNotifier
 from validators import CustomerValidator, PaymentDataValidator
 from loggers import TransactionLogger
@@ -18,6 +19,7 @@ class PaymentServiceBuilder:
     customer_validator: Optional[CustomerValidator] = None
     payment_validator: Optional[PaymentDataValidator] = None
     logger: Optional[TransactionLogger] = None
+    listener: Optional[ListenersManager] = None
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
     refund_processor: Optional[RefundProcessorProtocol] = None
 
@@ -46,6 +48,12 @@ class PaymentServiceBuilder:
             return self
         raise ValueError("No se puede seleccionar clase de notificación")
     
+    def set_listener(self):
+        listener = ListenersManager()
+        accountability_listner = AccountabilityListner()
+        listener.subscribe(accountability_listner)
+        self.listener = listener
+    
     def build(self):
         if not all(
             [
@@ -54,6 +62,7 @@ class PaymentServiceBuilder:
                 self.customer_validator,
                 self.payment_validator,
                 self.logger,
+                self.listener,
             ]
         ):
             missing =[
@@ -64,6 +73,7 @@ class PaymentServiceBuilder:
                     ("customer_validator",self.customer_validator),
                     ("payment_validator",self.payment_validator),
                     ("logger",self.logger),
+                    ("listener",self.listener),
                 ]
                 if value is None
             ]
@@ -74,6 +84,7 @@ class PaymentServiceBuilder:
             notifier=self.notifier,
             customer_validator=self.customer_validator,
             payment_validator=self.payment_validator,
-            logger=self.logger
+            logger=self.logger,
+            listener=self.listener,
         )
 

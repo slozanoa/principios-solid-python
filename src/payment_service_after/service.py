@@ -13,6 +13,7 @@ from notifiers import NotifierProtocol
 from validators import CustomerValidator, PaymentDataValidator
 from loggers import TransactionLogger
 from service_protocol import PaymentServiceProtocol
+from listeners import ListenersManager
 @dataclass
 class PaymentService(PaymentServiceProtocol):
     payment_processor: PaymentProcessorProtocol
@@ -20,6 +21,7 @@ class PaymentService(PaymentServiceProtocol):
     customer_validator: CustomerValidator
     payment_validator: PaymentDataValidator
     logger: TransactionLogger
+    listener: ListenersManager
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
     refund_processor: Optional[RefundProcessorProtocol] = None
 
@@ -50,6 +52,7 @@ class PaymentService(PaymentServiceProtocol):
         payment_response = self.payment_processor.process_transaction(
             customer_data, payment_data
         )
+        self.listener.notifyAll(f"pago exitoso al evento: {payment_response.transaction_id}")
         self.notifier.send_confirmation(customer_data)
         self.logger.log_transaction(
             customer_data, payment_data, payment_response

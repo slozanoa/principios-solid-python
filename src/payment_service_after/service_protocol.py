@@ -8,12 +8,14 @@ from processors import (
 from notifiers import NotifierProtocol
 from validators import CustomerValidator, PaymentDataValidator
 from loggers import TransactionLogger
+from listeners import ListenersManager
 class PaymentServiceProtocol(Protocol):
     payment_processor: PaymentProcessorProtocol
     notifier: NotifierProtocol
     customer_validator: CustomerValidator
     payment_validator: PaymentDataValidator
     logger: TransactionLogger
+    listener: ListenersManager
     recurring_processor: Optional[RecurringPaymentProcessorProtocol] = None
     refund_processor: Optional[RefundProcessorProtocol] = None
 
